@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AURA Dropship | Amazon.eg Sourcing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+  <!-- Header / Navigation -->
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-orange-500/20">
+          ⚡
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white">AURA Express <span class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">EG Edition</span></h1>
+          <p class="text-xs text-slate-400">Amazon.eg Sourcing & Local Fulfillment Dashboard</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-sm font-semibold">
+        <button id="tabBtnAdmin" onclick="switchTab('admin')" class="px-4 py-2 rounded-lg bg-orange-600 text-white shadow-md transition-all">
+          <i class="fa-solid fa-sliders mr-2"></i> Merchant Admin
+        </button>
+        <button id="tabBtnStore" onclick="switchTab('store')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all">
+          <i class="fa-solid fa-store mr-2"></i> Live Storefront
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- TAB 1: ADMIN & IMPORTER DASHBOARD -->
+    <section id="adminView" class="space-y-8">
+      
+      <!-- Top Metrics Bar -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 backdrop-blur-sm">
+          <div class="flex justify-between items-center text-slate-400 text-sm mb-1">
+            <span>Avg Profit Margin</span>
+            <i class="fa-solid fa-chart-line text-emerald-400"></i>
+          </div>
+          <p class="text-2xl font-black text-white">32.5% <span class="text-xs font-normal text-emerald-400">EGP</span></p>
+          <span class="text-xs text-slate-500">Calculated after courier fees</span>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 backdrop-blur-sm">
+          <div class="flex justify-between items-center text-slate-400 text-sm mb-1">
+            <span>Default Courier</span>
+            <i class="fa-solid fa-truck-fast text-amber-400"></i>
+          </div>
+          <p class="text-xl font-bold text-white">Bosta / MNT-Halan</p>
+          <span class="text-xs text-amber-400">50 EGP avg delivery fee</span>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 backdrop-blur-sm">
+          <div class="flex justify-between items-center text-slate-400 text-sm mb-1">
+            <span>Payment Methods</span>
+            <i class="fa-solid fa-wallet text-indigo-400"></i>
+          </div>
+          <p class="text-xl font-bold text-white">COD + InstaPay</p>
+          <span class="text-xs text-slate-400">+ Telda & Paymob Cards</span>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 backdrop-blur-sm">
+          <div class="flex justify-between items-center text-slate-400 text-sm mb-1">
+            <span>Active Products</span>
+            <i class="fa-solid fa-box-open text-orange-400"></i>
+          </div>
+          <p class="text-2xl font-black text-white" id="activeProductCount">3</p>
+          <span class="text-xs text-slate-500">Synced to Storefront</span>
+        </div>
+      </div>
+
+      <!-- Import New Amazon.eg Product Section -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-orange-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        <div class="max-w-3xl">
+          <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-brands fa-amazon text-amber-500"></i> Import Product from Amazon.eg
+          </h2>
+          <p class="text-slate-400 text-sm mb-6">Enter details from Amazon Egypt. Right-click any Amazon image and select "Copy Image Address" to paste its exact image link.</p>
+
+          <form id="importForm" onsubmit="handleImport(event)" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Amazon.eg Title / Product Name</label>
+                <input type="text" id="importTitle" required placeholder="e.g. Ergonomic RGB Gaming Mouse" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Product Image Link (URL)</label>
+                <input type="url" id="importImg" placeholder="Paste image link here (optional)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Amazon Cost (EGP)</label>
+                <input type="number" id="importCost" required min="10" placeholder="450" oninput="updateCalculations()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Your Selling Price (EGP)</label>
+                <input type="number" id="importSell" required min="10" placeholder="750" oninput="updateCalculations()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Estimated Net Profit</label>
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-emerald-400 font-bold flex items-center justify-between">
+                  <span id="calcProfit">0 EGP</span>
+                  <span class="text-xs text-slate-500 font-normal">(-50 EGP Bosta)</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-orange-500/25 hover:brightness-110 transition-all">
+              <i class="fa-solid fa-plus-circle mr-2"></i> Publish to Store Catalog
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Current Catalog Management -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-boxes-packing text-orange-400"></i> Managed Amazon Inventory
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="adminProductGrid">
+          <!-- Dynamic Products inserted here -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: STOREFRONT VIEW -->
+    <section id="storeView" class="hidden space-y-8">
+      
+      <!-- Storefront Hero Banner -->
+      <div class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-3xl p-8 text-slate-950 relative overflow-hidden shadow-2xl">
+        <div class="max-w-2xl space-y-4">
+          <span class="px-3 py-1 bg-slate-950 text-white text-xs font-bold uppercase rounded-full tracking-wide">🔥 Express Local Delivery</span>
+          <h2 class="text-4xl font-black leading-tight">Premium Tech Accessories Delivered Across Egypt</h2>
+          <p class="font-medium text-slate-900">1-3 Day Delivery in Cairo, Alexandria, Delta & Upper Egypt. Pay with Cash on Delivery, Telda, or InstaPay.</p>
+        </div>
+      </div>
+
+      <!-- Filter / Category Header -->
+      <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+        <h3 class="text-2xl font-bold text-white">Featured Products</h3>
+        <span class="text-sm text-slate-400"><i class="fa-solid fa-shield-check text-emerald-400"></i> Verified Amazon Quality Guaranteed</span>
+      </div>
+
+      <!-- Store Products Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="storeProductGrid">
+        <!-- Products populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Checkout Drawer / Modal -->
+  <div id="checkoutModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-6 relative shadow-2xl">
+      <button onclick="closeCheckout()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div>
+        <h3 class="text-2xl font-bold text-white">Complete Your Order</h3>
+        <p class="text-sm text-slate-400">Fast local shipping & payment verification</p>
+      </div>
+
+      <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-400" id="checkoutItemTitle">Product Title</span>
+          <span class="text-white font-bold" id="checkoutItemPrice">0 EGP</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-400">Shipping (Bosta Delivery):</span>
+          <span class="text-amber-400 font-bold">50 EGP</span>
+        </div>
+        <div class="border-t border-slate-800 pt-2 flex justify-between font-bold">
+          <span class="text-white">Total Amount:</span>
+          <span class="text-emerald-400 text-lg" id="checkoutItemTotal">0 EGP</span>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection -->
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold uppercase text-slate-400">Select Payment Method</label>
+        
+        <label class="flex items-center gap-3 bg-slate-950 border border-slate-800 p-3.5 rounded-xl cursor-pointer hover:border-orange-500 transition-colors">
+          <input type="radio" name="payMethod" value="cod" checked class="accent-orange-500">
+          <div>
+            <p class="text-white font-bold text-sm">💵 Cash on Delivery (COD)</p>
+            <p class="text-xs text-slate-400">Pay cash directly to the courier upon delivery</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 bg-slate-950 border border-slate-800 p-3.5 rounded-xl cursor-pointer hover:border-orange-500 transition-colors">
+          <input type="radio" name="payMethod" value="instapay" class="accent-orange-500">
+          <div>
+            <p class="text-white font-bold text-sm">⚡ InstaPay Direct Transfer</p>
+            <p class="text-xs text-slate-400">Instant transfer via your Egyptian bank account</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 bg-slate-950 border border-slate-800 p-3.5 rounded-xl cursor-pointer hover:border-orange-500 transition-colors">
+          <input type="radio" name="payMethod" value="telda" class="accent-orange-500">
+          <div>
+            <p class="text-white font-bold text-sm">💳 Telda Card Transfer</p>
+            <p class="text-xs text-slate-400">Direct wallet transfer via Telda App</p>
+          </div>
+        </label>
+      </div>
+
+      <button onclick="confirmOrder()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/20 hover:brightness-110 transition-all">
+        Place Order Now
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic Engine with LocalStorage Memory -->
+  <script>
+    // Default fallback products if storage is empty
+    const defaultProducts = [
+      {
+        id: 1,
+        title: "Fast-Charging Magnetic Wireless Power Bank (10,000mAh)",
+        amazonCost: 650,
+        sellPrice: 990,
+        img: "https://images.unsplash.com/photo-1609592424074-b5bf8389ff70?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 2,
+        title: "Adjustable Aluminum Laptop & Tablet Stand",
+        amazonCost: 320,
+        sellPrice: 580,
+        img: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 3,
+        title: "Noise-Cancelling Over-Ear Wireless Headphones",
+        amazonCost: 850,
+        sellPrice: 1390,
+        img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80"
+      }
+    ];
+
+    // Load saved products from browser storage or fall back to defaults
+    let products = JSON.parse(localStorage.getItem('aura_eg_products')) || defaultProducts;
+
+    function saveToStorage() {
+      localStorage.setItem('aura_eg_products', JSON.stringify(products));
+    }
+
+    function renderCatalog() {
+      const adminGrid = document.getElementById('adminProductGrid');
+      const storeGrid = document.getElementById('storeProductGrid');
+      document.getElementById('activeProductCount').innerText = products.length;
+
+      adminGrid.innerHTML = '';
+      storeGrid.innerHTML = '';
+
+      products.forEach(p => {
+        const netProfit = p.sellPrice - p.amazonCost - 50; // 50 EGP Bosta shipping fee
+
+        // Admin Card
+        adminGrid.innerHTML += `
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between space-y-4">
+            <div class="flex gap-4">
+              <img src="${p.img}" class="w-20 h-20 rounded-xl object-cover bg-slate-900" />
+              <div>
+                <h4 class="text-white font-bold text-sm line-clamp-2">${p.title}</h4>
+                <p class="text-xs text-slate-400 mt-1">Amazon Cost: <span class="text-slate-200">${p.amazonCost} EGP</span></p>
+                <p class="text-xs text-slate-400">Store Price: <span class="text-amber-400 font-bold">${p.sellPrice} EGP</span></p>
+              </div>
+            </div>
+            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800/80 flex justify-between items-center text-xs">
+              <span class="text-slate-400">Net EGP Profit:</span>
+              <span class="text-emerald-400 font-black text-sm">+${netProfit} EGP</span>
+            </div>
+            <button onclick="deleteProduct(${p.id})" class="text-xs text-rose-400 hover:text-rose-300 transition-colors text-right">
+              <i class="fa-solid fa-trash mr-1"></i> Remove Listing
+            </button>
+          </div>
+        `;
+
+        // Storefront Card
+        storeGrid.innerHTML += `
+          <div class="bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between group shadow-xl">
+            <div class="relative aspect-square overflow-hidden bg-slate-900">
+              <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">In Stock EG</span>
+            </div>
+            <div class="p-5 space-y-3">
+              <h4 class="text-white font-bold text-lg leading-snug line-clamp-2">${p.title}</h4>
+              <div class="flex justify-between items-baseline">
+                <span class="text-2xl font-black text-white">${p.sellPrice} <span class="text-xs text-slate-400 font-normal">EGP</span></span>
+                <span class="text-xs text-emerald-400 font-semibold"><i class="fa-solid fa-truck"></i> Fast EG Delivery</span>
+              </div>
+              <button onclick="openCheckout(${p.id})" class="w-full py-3 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-orange-500/20">
+                Buy Now (COD / InstaPay)
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function updateCalculations() {
+      const cost = parseFloat(document.getElementById('importCost').value) || 0;
+      const sell = parseFloat(document.getElementById('importSell').value) || 0;
+      const profit = sell - cost - 50; // 50 EGP local courier fee
+      
+      const profitEl = document.getElementById('calcProfit');
+      profitEl.innerText = `${profit > 0 ? profit : 0} EGP`;
+      if (profit > 0) {
+        profitEl.className = "text-emerald-400 font-bold";
+      } else {
+        profitEl.className = "text-rose-400 font-bold";
+      }
+    }
+
+    function handleImport(e) {
+      e.preventDefault();
+      const title = document.getElementById('importTitle').value;
+      const cost = parseFloat(document.getElementById('importCost').value);
+      const sell = parseFloat(document.getElementById('importSell').value);
+      
+      const customImg = document.getElementById('importImg').value;
+      const defaultImg = "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500&auto=format&fit=crop&q=80";
+
+      const newProduct = {
+        id: Date.now(),
+        title: title,
+        amazonCost: cost,
+        sellPrice: sell,
+        img: customImg.trim() !== "" ? customImg : defaultImg
+      };
+
+      products.unshift(newProduct);
+      saveToStorage(); // Saves permanently to browser memory
+      renderCatalog();
+
+      // Reset Form
+      document.getElementById('importForm').reset();
+      document.getElementById('calcProfit').innerText = "0 EGP";
+      alert('Product imported and saved successfully!');
+    }
+
+    function deleteProduct(id) {
+      products = products.filter(p => p.id !== id);
+      saveToStorage(); // Updates browser memory
+      renderCatalog();
+    }
+
+    function switchTab(tab) {
+      const adminView = document.getElementById('adminView');
+      const storeView = document.getElementById('storeView');
+      const btnAdmin = document.getElementById('tabBtnAdmin');
+      const btnStore = document.getElementById('tabBtnStore');
+
+      if (tab === 'admin') {
+        adminView.classList.remove('hidden');
+        storeView.classList.add('hidden');
+        btnAdmin.className = "px-4 py-2 rounded-lg bg-orange-600 text-white shadow-md transition-all";
+        btnStore.className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all";
+      } else {
+        storeView.classList.remove('hidden');
+        adminView.classList.add('hidden');
+        btnStore.className = "px-4 py-2 rounded-lg bg-orange-600 text-white shadow-md transition-all";
+        btnAdmin.className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all";
+      }
+    }
+
+    function openCheckout(id) {
+      currentSelectedProduct = products.find(p => p.id === id);
+      if (!currentSelectedProduct) return;
+
+      document.getElementById('checkoutItemTitle').innerText = currentSelectedProduct.title;
+      document.getElementById('checkoutItemPrice').innerText = `${currentSelectedProduct.sellPrice} EGP`;
+      document.getElementById('checkoutItemTotal').innerText = `${currentSelectedProduct.sellPrice + 50} EGP`;
+
+      document.getElementById('checkoutModal').classList.remove('hidden');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.add('hidden');
+    }
+
+    function confirmOrder() {
+      alert(`Order placed successfully! Total: ${currentSelectedProduct.sellPrice + 50} EGP. We will contact you via WhatsApp for delivery confirmation.`);
+      closeCheckout();
+    }
+
+    // Initialize on page load
+    renderCatalog();
+  </script>
+</body>
+</html>
